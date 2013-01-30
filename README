@@ -1,0 +1,1 @@
+This package is based on package Rniftilib. We heavily modified their C code file 'Rniftilib.C' that acts as an R wrapper to the niftilib. None of the original Rniftilib functions or class definitions have been included in this package.

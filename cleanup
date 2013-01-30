@@ -1,0 +1,2 @@
+rm -f src/Makevars
+rm -rf .RData

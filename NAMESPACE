@@ -1,0 +1,4 @@
+import(bigmemory)
+import(bigextensions)
+exportPattern("^[^\\.]")
+useDynLib(niftir)
