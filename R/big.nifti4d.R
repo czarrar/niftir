@@ -262,7 +262,7 @@ read.big.nifti_read <- function(nifti_obj, bigmat) {
 #' 
 #' @keywords methods
 read.big.nifti4d <- function(file, ...) {
-    read.big.nifti(file, as.nifti4d=TRUE, ...)
+    read.big.nifti(file, nifti4d=TRUE, ...)
 }
 
 read.big.nifti <- function(file, nifti4d=FALSE, type=NULL, ...) {
