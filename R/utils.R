@@ -1,4 +1,4 @@
-niftir.split.indices <- function(from, to, by=NULL, length.out=NULL) {
+niftir.split.indices <- function(from, to, by=NULL, length.out=NULL, squeeze=FALSE) {
     if (!is.null(by) && !is.null(length.out))
         stop("too many arguments")
     
@@ -13,9 +13,17 @@ niftir.split.indices <- function(from, to, by=NULL, length.out=NULL) {
     }
     
     ends <- starts + by - 1
-    ends[length(ends)] <- to
+    n <- length(ends)
     
-    return(list(starts=starts, ends=ends, n=length(starts)))
+    if (squeeze && (ends[n] == (ends[n-1]+1))) {
+        starts <- starts[1:(n-1)]
+        ends <- ends[1:(n-1)]
+        n <- n - 1
+    }
+    
+    ends[n] <- to
+    
+    return(list(starts=starts, ends=ends, n=n))
 }
 
 #' Remove extension from file
