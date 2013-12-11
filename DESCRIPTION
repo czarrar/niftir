@@ -7,7 +7,7 @@ Author: Zarrar Shehzad <zarrar [dot] shehzad [at] yale.edu> and Jay
     Emerson
 Maintainer: Zarrar Shehzad <zarrar.shehzad@yale.edu>
 Depends: methods, bigmemory, bigextensions
-LinkingTo: bigmemory
+LinkingTo: bigmemory, BH
 Description: Read/write nifti/analyze files using the nifticlib. Files
     can be read into R as an array type class or in the case of 4D
     files (3D+time) as a matrix or big matrix type class.

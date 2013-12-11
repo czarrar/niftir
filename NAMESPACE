@@ -1,4 +1,4 @@
-import(bigmemory)
+import(bigmemory, bigmemory.sri, BH)
 import(bigextensions)
 exportPattern("^[^\\.]")
 useDynLib(niftir)
