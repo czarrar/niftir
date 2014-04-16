@@ -337,7 +337,7 @@ Copyright (C) 2006 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/Users/zarrar/Dropbox/code/R/niftir'
+ac_pwd='/Users/zarrar/Dropbox/Code/R/niftir'
 srcdir='.'
 # If no file are specified by the user, then we need to provide default
 # value.  By we need to know if files were specified by the user.
@@ -533,7 +533,7 @@ s,@CPP@,|#_!!_#|gcc -E,g
 s,@GREP@,|#_!!_#|/usr/bin/grep,g
 s,@EGREP@,|#_!!_#|/usr/bin/grep -E,g
 s,@LIBOBJS@,|#_!!_#|,g
-s,@PKG_CONFIG@,|#_!!_#|/usr/local/bin/pkg-config,g
+s,@PKG_CONFIG@,|#_!!_#|/sw/bin/pkg-config,g
 s,@PACKAGE_CFLAGS@,|#_!!_#|,g
 s,@PACKAGE_LIBS@,|#_!!_#|,g
 s,@INCLUDE@,|#_!!_#|,g
