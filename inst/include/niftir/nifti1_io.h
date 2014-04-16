@@ -17,12 +17,12 @@
 #endif
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#include "config.h"
 #endif
 
-#include "nifti1.h"                  /*** NIFTI-1 header specification ***/
+#include "niftir/nifti1.h"                  /*** NIFTI-1 header specification ***/
 
-#include "znzlib.h"
+#include "niftir/znzlib.h"
 
 /*=================*/
 #ifdef  __cplusplus

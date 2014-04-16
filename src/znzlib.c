@@ -23,7 +23,7 @@ NB: seeks for writable files with compression are quite restricted
 /* changes by Oliver Granert:
 - change HAVE_ZLIB to HAVE_LIBZ to fit autoconf tests
 */
-#include "znzlib.h"
+#include "niftir/znzlib.h"
 #include <R.h>
 
 /*
