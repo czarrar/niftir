@@ -226,8 +226,6 @@ setMethod('write.nifti',
         if (sum(mask) != nrow(x))
             stop("number of TRUE elements in mask is not equal to nrow of input x")
         
-        stop("This function needs to be tested before further use!")
-        
         header <- autocal(x, header, odt)
         header <- create.header(header, ...)
         if (prod(header$dim[1:3]) != length(mask))
