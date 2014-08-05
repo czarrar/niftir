@@ -234,7 +234,7 @@ setMethod('write.nifti',
         header$pixdim <- c(header$pixdim[1:3], 1)
         
         out <- matrix(NA, prod(header$dim[1:3]), header$dim[4])
-        out[mask,] <- t(x)
+        out[mask,] <- x
         out <- as.double(out)
         dim(out) <- header$dim
         
