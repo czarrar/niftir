@@ -749,7 +749,7 @@ void Read_Partial_Nifti_To_BigMatrix_Step3(void *pnim_data, MatrixAccessorType m
    index_type jj=0;
    index_type kk=0;
    bT *pColumn;
-   bT value; // not really used (for debugging)
+   //bT value; // not really used (for debugging)
     
    // Take only a subset based on the 
    // rows (spatial) or the cols (time-point)
