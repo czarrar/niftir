@@ -1,3 +1,4 @@
+#include <iostream>
 #include "bigmemory/BigMatrix.h"
 
 #include "bigmemory/MatrixAccessor.hpp"
@@ -12,7 +13,6 @@
 #include <algorithm>
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
