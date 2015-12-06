@@ -1,3 +1,4 @@
+import(Rcpp)
 import(bigmemory, bigmemory.sri, BH)
 import(bigextensions)
 exportPattern("^[^\\.]")
