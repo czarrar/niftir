@@ -1,2 +1,2 @@
 PKG_CPPFLAGS=-g -O2  -I/usr/include -I../inst/include   -DHAVE_CONFIG_H
-PKG_LIBS= -L/usr/lib -lz  
+PKG_LIBS= -L/usr/lib -lz  $(${R_HOME}/bin/Rscript -e 'Rcpp:::LdFlags()')"
