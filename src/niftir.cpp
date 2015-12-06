@@ -730,7 +730,7 @@ void Read_Nifti_to_BigMatrix_Step3(void *pnim_data, MatrixAccessorType m, \
    index_type i=0;
    index_type j=0;
    index_type k=0;
-   bT *pColumn;
+   //bT *pColumn;
         
    for (i=0; i < nrows; ++i)
        for (j=0; j < ncols; ++j, ++k)       
@@ -744,7 +744,6 @@ void Read_Partial_Nifti_To_BigMatrix_Step3(void *pnim_data, MatrixAccessorType m
                                           SEXP totalVoxs) {
    index_type i=0;
    index_type j=0;
-   index_type k=0;
    index_type ii=0;
    index_type jj=0;
    index_type kk=0;
