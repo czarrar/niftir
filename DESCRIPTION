@@ -6,9 +6,9 @@ Date: 2011-04-06
 Author: Zarrar Shehzad <zarrar [dot] shehzad [at] yale.edu> and Jay
     Emerson
 Maintainer: Zarrar Shehzad <zarrar.shehzad@yale.edu>
-Depends: methods, utils, bigmemory, bigmemory.sri, bigextensions, Rcpp
-Imports: bigmemory, Rcpp
-LinkingTo: bigmemory, BH
+Depends: methods, utils, Rcpp, bigmemory.sri, bigmemory, bigextensions
+Imports: Rcpp, bigmemory
+LinkingTo: Rcpp, BH, bigmemory
 Description: Read/write nifti/analyze files using the nifticlib. Files
     can be read into R as an array type class or in the case of 4D
     files (3D+time) as a matrix or big matrix type class.
