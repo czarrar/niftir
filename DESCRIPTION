@@ -6,7 +6,7 @@ Date: 2011-04-06
 Author: Zarrar Shehzad <zarrar [dot] shehzad [at] yale.edu> and Jay
     Emerson
 Maintainer: Zarrar Shehzad <zarrar.shehzad@yale.edu>
-Depends: methods, bigmemory, bigextensions, Rcpp
+Depends: methods, utils, bigmemory, bigmemory.sri, bigextensions, Rcpp
 Imports: bigmemory, Rcpp
 LinkingTo: bigmemory, BH
 Description: Read/write nifti/analyze files using the nifticlib. Files
