@@ -348,3 +348,5 @@ setMethod("free.memory",
         return(xs)
     }
 )
+
+test_version <- function() return("niftir version 0.1")
