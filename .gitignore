@@ -10,8 +10,6 @@ src/*.so
 
 config.log
 config.status
-configure
-configure.in
 src/Makevars.in
 
 .DS_Store
