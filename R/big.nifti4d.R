@@ -300,12 +300,17 @@ setMethod("free.memory",
     function(x) {
         if (!is.filebacked(x))
             stop("input to free.memory cannot be a non-filebacked big.matrix")
+        hdr  <- x@header
+        mask <- x@mask
+        dfile<- x@descriptorfile
+        rm(x)
         # free up memory
-        .Call("CDestroyBigMatrix", x@address, PACKAGE="bigmemory")
-        gc()
+        #.Call("CDestroyBigMatrix", x@address, PACKAGE="bigmemory")
         # reattach matrix
-        tmp <- attach.big.matrix(x@descriptorfile)
-        x@address <- tmp@address
+        #tmp <- attach.big.matrix(x@descriptorfile)
+        #x@address <- tmp@address
+        x <- attach.big.matrix(dfile)
+        x <- as.big.nifti4d(x, hdr, mask)
         # done!
         return(x)
     }
@@ -324,15 +329,21 @@ setMethod("free.memory",
                 stop("input to free.memory cannot be a non-filebacked big.matrix")
         })
         # free memory
-        lapply(xs, function(x) 
-            .Call("CDestroyBigMatrix", x@address, PACKAGE="bigmemory")
-        )
+        hdrs  <- lapply(xs, function(x) x@header)
+        masks <- lapply(xs, function(x) x@mask)
+        ds <- lapply(xs, function(x) {
+            d <- describe(x)
+            #.Call("CDestroyBigMatrix", x@address, PACKAGE="bigmemory")
+            return(d)
+        })
+        rm(xs)
         gc()
         # reattach matrices
-        for (i in 1:length(xs)) {
-            tmp <- attach.big.matrix(xs[[i]]@descriptorfile)
-            xs[[i]]@address <- tmp@address
-        }
+        xs <- lapply(1:length(ds), function(i) {
+            x <- attach.big.matrix(ds[[i]])
+            #xs[[i]]@address <- tmp@address
+            as.big.nifti4d(x, hdrs[[i]], masks[[i]])
+        })
         # done!
         return(xs)
     }
