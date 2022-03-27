@@ -1,4 +1,5 @@
 #include <iostream>
+#define R_NO_REMAP
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
@@ -30,10 +31,10 @@ extern "C" {
 
 SEXP getListElement(SEXP list, const char *str)
 {
-    SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
+    SEXP elmt = R_NilValue, names = Rf_getAttrib(list, R_NamesSymbol);
     int i;
     
-    int len_list = length(list);
+    int len_list = Rf_length(list);
     for (i = 0; i < len_list; i++)
     	if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
     	    elmt = VECTOR_ELT(list, i);
@@ -53,7 +54,7 @@ SEXP getHeaderAttributes(void) {
     PROTECT(header=NEW_CHARACTER(NUM_HEADER_ATTRS));
     
     for(size_t i = 0; i < NUM_HEADER_ATTRS; ++i)
-        SET_STRING_ELT(header, i, mkChar(header_attributes[i]));
+        SET_STRING_ELT(header, i, Rf_mkChar(header_attributes[i]));
     
     UNPROTECT(1);
     return header;
@@ -84,10 +85,10 @@ nifti_image *niftir_image_read(SEXP file, SEXP read_data) {
     PROTECT(read_data = AS_INTEGER(read_data));
     PROTECT(file = AS_CHARACTER(file));
 
-    if(!isString(file) || length(file) != 1)
-        error("niftir_image_read: file is not a single string\n");
-    if(length(read_data) != 1)
-        error("niftir_image_read: read_data is not a single integer\n");
+    if(!Rf_isString(file) || Rf_length(file) != 1)
+        Rf_error("niftir_image_read: file is not a single string\n");
+    if(Rf_length(read_data) != 1)
+        Rf_error("niftir_image_read: read_data is not a single integer\n");
     
     int *piread_data = INTEGER_POINTER(read_data);
     const char *pcfilename  = CHAR(STRING_ELT(file , 0));
@@ -95,7 +96,7 @@ nifti_image *niftir_image_read(SEXP file, SEXP read_data) {
     pnim = nifti_image_read(pcfilename, piread_data[0]) ;
     
     if (pnim==NULL) {
-        error("Rnifti_image_read: Cannot open file \"%s\"",pcfilename);
+        Rf_error("Rnifti_image_read: Cannot open file \"%s\"",pcfilename);
         UNPROTECT(2);
     } else {
         UNPROTECT(2);
@@ -173,7 +174,7 @@ SEXP get_nifti_header(nifti_image *pnim) {
             NUMERIC_POINTER(pixdim)[i] = pnim->pixdim[i+1];
         UNPROTECT(1);
     } else {
-        error("number of dimensions (dim[0]) > 7");
+        Rf_error("number of dimensions (dim[0]) > 7");
     }
     SET_ELEMENT(header, 14, pixdim);
     
@@ -213,7 +214,7 @@ SEXP get_nifti_header(nifti_image *pnim) {
             INTEGER_POINTER(dim)[i] = pnim->dim[i+1];
         UNPROTECT(1);
     } else {
-        error("number of dimensions (dim[0]) > 7");
+        Rf_error("number of dimensions (dim[0]) > 7");
     }
     SET_ELEMENT(header, 24, dim);
     
@@ -237,9 +238,9 @@ SEXP get_nifti_header(nifti_image *pnim) {
     
     // Set list element names
     SEXP names;
-    PROTECT(names = allocVector(STRSXP, NUM_HEADER_ATTRS));
+    PROTECT(names = Rf_allocVector(STRSXP, NUM_HEADER_ATTRS));
     for (int i = 0; header_attributes[i]!=NULL; ++i)
-        SET_STRING_ELT(names, i, mkChar(header_attributes[i]));
+        SET_STRING_ELT(names, i, Rf_mkChar(header_attributes[i]));
     SET_NAMES(header, names);
     UNPROTECT(1);
             
@@ -327,7 +328,7 @@ SEXP read_nifti(SEXP file, SEXP read_data) {
                 DOUBLE_DATA(arr)[i] = (double)((double*)pnim->data)[i];
             break;
     	default:
-    	    warning("unsupported data format (identifier %d)", pnim->datatype);
+            Rcpp::warning("unsupported data format (identifier %d)", pnim->datatype);
             break;
     }
     
@@ -339,9 +340,9 @@ SEXP read_nifti(SEXP file, SEXP read_data) {
     
     // Give names to list
     SEXP names;
-    PROTECT(names = allocVector(STRSXP, 2));
-    SET_STRING_ELT(names, 0, mkChar("header"));
-    SET_STRING_ELT(names, 1, mkChar("image"));
+    PROTECT(names = Rf_allocVector(STRSXP, 2));
+    SET_STRING_ELT(names, 0, Rf_mkChar("header"));
+    SET_STRING_ELT(names, 1, Rf_mkChar("image"));
     SET_NAMES(nim, names);
     UNPROTECT(1);
     
@@ -359,10 +360,10 @@ nifti_image *create_nifti_image(SEXP header, SEXP Rdim, SEXP Rdatatype, SEXP out
     int dim[8], datatype;
     
     if (!IS_LIST(header))
-        error("header must be a list");
+        Rf_error("header must be a list");
     
     // Get dimensions from data
-    int lendim = length(Rdim);
+    int lendim = Rf_length(Rdim);
     if (lendim>1 && lendim<8) {
         dim[0] = lendim;
         for(int i = 0; i < lendim; ++i)
@@ -370,7 +371,7 @@ nifti_image *create_nifti_image(SEXP header, SEXP Rdim, SEXP Rdatatype, SEXP out
         for(int i = lendim; i < 8; ++i)
             dim[i+1] = 0;
     } else {
-        error("number of dimensions %d not compatible", lendim);
+        Rf_error("number of dimensions %d not compatible", lendim);
     }
     UNPROTECT(1);
     
@@ -386,7 +387,7 @@ nifti_image *create_nifti_image(SEXP header, SEXP Rdim, SEXP Rdatatype, SEXP out
     int fname_result = nifti_set_filenames(pnim, pcoutfile, 1, 1);
     UNPROTECT(1);
     if (fname_result != 0)
-        error("file already exists, can't write output\n");
+        Rf_error("file already exists, can't write output\n");
     
     set_nifti_header(pnim, header);
     
@@ -581,7 +582,7 @@ SEXP write_nifti(SEXP header, SEXP data, SEXP outfile) {
     SEXP Rdim, Rdatatype;
     
     if (!IS_VECTOR(data))
-        error("data must be vector type");
+        Rf_error("data must be vector type");
     
     // Get dim
     PROTECT(Rdim = GET_DIM(data));
@@ -646,17 +647,17 @@ SEXP write_nifti(SEXP header, SEXP data, SEXP outfile) {
                 ((double*)pnim->data)[i] = (double)(DOUBLE_DATA(data)[i]);
             break;
     	default:
-    	    warning("unsupported data format (identifier %d)", pnim->datatype);
+            Rcpp::warning("unsupported data format (identifier %d)", pnim->datatype);
             break;
     }
     
     if (!nifti_nim_is_valid(pnim, 1))
-        error("data seems invalid");
+        Rf_error("data seems invalid");
     
     if (pnim!=NULL)
         nifti_image_write(pnim);
     else
-        error("pnim was NULL");
+        Rf_error("pnim was NULL");
     
     nifti_image_free(pnim);
     
@@ -697,7 +698,7 @@ extern "C" {
         PROTECT(header = get_nifti_header(pnim));
 
         // Get nifti pointer    
-        ptr = R_MakeExternalPtr(pnim, install("NIFTI_TYPE_TAG"), R_NilValue);
+        ptr = R_MakeExternalPtr(pnim, Rf_install("NIFTI_TYPE_TAG"), R_NilValue);
         PROTECT(ptr);
         R_RegisterCFinalizer(ptr, (R_CFinalizer_t) niftir_image_free);
 
@@ -708,9 +709,9 @@ extern "C" {
 
         // Give names to list
         SEXP names;
-        PROTECT(names = allocVector(STRSXP, 2));
-        SET_STRING_ELT(names, 0, mkChar("header"));
-        SET_STRING_ELT(names, 1, mkChar("address"));
+        PROTECT(names = Rf_allocVector(STRSXP, 2));
+        SET_STRING_ELT(names, 0, Rf_mkChar("header"));
+        SET_STRING_ELT(names, 1, Rf_mkChar("address"));
         SET_NAMES(nim, names);
     
         UNPROTECT(4);
@@ -775,7 +776,7 @@ void Read_Partial_Nifti_To_BigMatrix_Step3(void *pnim_data, MatrixAccessorType m
            pColumn[i] = (bT)((dT)pnim_data)[kk];
             
            //value = (bT)((dT)pnim_data)[kk];
-           //printf("ii: %i; jj: %i; kk: %i; val: %f\n", \
+           //printf("ii: %i; jj: %i; kk: %i; val: %f\n",
            //       (int)ii, (int)jj, (int)kk, (double)value);
        }
    }
@@ -822,7 +823,7 @@ SEXP Read_Nifti_to_BigMatrix_Step2(nifti_image *pnim, BigMatrix *pMat, MatrixAcc
                                                       pMat->ncol(), pMat->nrow());
            break;
        default:
-           warning("unsupported data format (identifier %d)", pnim->datatype);
+           Rcpp::warning("unsupported data format (identifier %d)", pnim->datatype);
            break;
    }
     
@@ -876,7 +877,7 @@ SEXP Read_Partial_Nifti_To_BigMatrix_Step2(nifti_image *pnim, MatrixAccessorType
                                              totalVoxs);
            break;
        default:
-           warning("unsupported data format (identifier %d)", pnim->datatype);
+           Rcpp::warning("unsupported data format (identifier %d)", pnim->datatype);
            break;
    }
     
@@ -895,7 +896,7 @@ extern "C" {
        // Get nifti data
        if (nifti_image_load(pnim) < 0) {
           nifti_image_free(pnim);
-          error("Could not load nifti data");
+          Rf_error("Could not load nifti data");
        }
     
        // Save data to big matrix object
@@ -934,7 +935,7 @@ extern "C" {
            }
        }
         
-       error("failed to identify big matrix type");
+       Rf_error("failed to identify big matrix type");
    }
     
    SEXP read_partial_bignifti_data(SEXP nim_addr, SEXP big_addr, \
@@ -946,7 +947,7 @@ extern "C" {
        // Get nifti data
        if (nifti_image_load(pnim) < 0) {
           nifti_image_free(pnim);
-          error("Could not load nifti data");
+          Rf_error("Could not load nifti data");
        }
         
        // Save data to big matrix object
@@ -993,7 +994,7 @@ extern "C" {
            }
        }
     
-       error("failed to identify big matrix type");
+       Rf_error("failed to identify big matrix type");
    }
 }
 
@@ -1023,7 +1024,7 @@ void Write_BigMatrix_To_Nifti_Step3(nifti_image *pnim, BigMatrix *pMat, SEXP ind
     printf("1.3\n");
     
     if (numCols != pMat->ncol())
-        error("indices must have the same length as number of columns in big matrix");
+        Rf_error("indices must have the same length as number of columns in big matrix");
     index_type numRows = pMat->nrow();
     
     printf("1.4\n");
@@ -1077,7 +1078,7 @@ SEXP Write_BigMatrix_To_Nifti_Step2(nifti_image *pnim, BigMatrix *pMat, SEXP ind
             Write_BigMatrix_To_Nifti_Step3<CType, double, BMAccessorType>(pnim, pMat, indices);
             break;
     	default:
-    	    warning("unsupported data format (identifier %d)", pnim->datatype);
+    	    Rcpp::warning("unsupported data format (identifier %d)", pnim->datatype);
             break;
     }
     
@@ -1096,9 +1097,9 @@ extern "C" {
         // Get dim
         PROTECT(Rdim = GET_LIST_ELEMENT(header, "dim"));
         if (Rdim == R_NilValue)
-            error("header must have a proper dim (dimension) attribute");
+            Rf_error("header must have a proper dim (dimension) attribute");
         if (GET_LENGTH(Rdim) != 4)
-            error("header must have a 4D dim (dimension) attribute");
+            Rf_error("header must have a 4D dim (dimension) attribute");
         
         // Get datatype
         PROTECT(Rdatatype = GET_LIST_ELEMENT(header, "datatype"));
@@ -1118,7 +1119,7 @@ extern "C" {
                     datatype = DT_FLOAT64;
                     break;
                 default:
-                    error("unrecognized big matrix data type");
+                    Rf_error("unrecognized big matrix data type");
                     break;
             }
             Rdatatype = int_to_SEXP(datatype);
@@ -1162,12 +1163,12 @@ extern "C" {
         }
         
         if (!nifti_nim_is_valid(pnim, 1))
-            error("data seems invalid");
+            Rf_error("data seems invalid");
         
         if (pnim!=NULL)
             nifti_image_write(pnim);
         else
-            error("pnim was NULL");
+            Rf_error("pnim was NULL");
         
         nifti_image_free(pnim);
         
